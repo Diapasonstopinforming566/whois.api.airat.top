@@ -4,8 +4,8 @@
 
 Public Cloudflare Worker API for WHOIS/RDAP domain lookup.
 
-Live endpoint:
-- https://whois.api.airat.top
+Live endpoint: https://whois.api.airat.top
+Status page: https://status.airat.top
 
 ## API
 
