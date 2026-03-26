@@ -4,6 +4,7 @@ import { connect } from 'cloudflare:sockets';
 const SERVICE_NAME = 'whois.api.airat.top';
 const RDAP_BASE_URL = 'https://rdap.org/domain/';
 const WHOIS_FALLBACK_BASE_URL = 'https://www.whois.com/whois/';
+const WHOIS_CO_IM_BASE_URL = 'https://whois.co.im/';
 
 const CORS_HEADERS = {
   'Access-Control-Allow-Origin': '*',
@@ -525,6 +526,18 @@ function decodeHtmlEntities(value) {
   });
 }
 
+function stripHtmlTags(value) {
+  if (typeof value !== 'string' || value === '') {
+    return '';
+  }
+
+  return decodeHtmlEntities(value.replace(/<[^>]+>/g, ' ').replace(/\s+/g, ' ').trim());
+}
+
+function escapeRegex(value) {
+  return String(value).replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+}
+
 function extractRawWhoisFromHtml(html) {
   if (typeof html !== 'string' || html === '') {
     return null;
@@ -700,6 +713,91 @@ function hasMeaningfulWhoisData(parsed) {
     || (Array.isArray(parsed.nameservers) && parsed.nameservers.length > 0)
     || (Array.isArray(parsed.status) && parsed.status.length > 0)
   );
+}
+
+function extractWhoisCoImValue(html, label) {
+  const regex = new RegExp(
+    `<p[^>]*>\\s*<strong>\\s*${escapeRegex(label)}\\s*:<\\/strong>\\s*([\\s\\S]*?)<\\/p>`,
+    'i'
+  );
+
+  const match = html.match(regex);
+  if (!match) {
+    return null;
+  }
+
+  const value = normalizeValue(stripHtmlTags(match[1]));
+  if (!value) {
+    return null;
+  }
+
+  return value;
+}
+
+function extractWhoisCoImList(html, heading) {
+  const headingRegex = new RegExp(
+    `<div[^>]*class="[^"]*card-header[^"]*"[^>]*>\\s*<strong>\\s*${escapeRegex(heading)}\\s*<\\/strong>\\s*<\\/div>`,
+    'i'
+  );
+  const headingMatch = headingRegex.exec(html);
+  if (!headingMatch) {
+    return [];
+  }
+
+  const afterHeading = html.slice(headingMatch.index);
+  const listMatch = afterHeading.match(/<ul[^>]*>([\s\S]*?)<\/ul>/i);
+  if (!listMatch) {
+    return [];
+  }
+
+  const listBody = listMatch[1];
+  const liRegex = /<li[^>]*>([\s\S]*?)<\/li>/gi;
+  const values = [];
+
+  let itemMatch = liRegex.exec(listBody);
+  while (itemMatch) {
+    const value = normalizeValue(stripHtmlTags(itemMatch[1]));
+    if (value) {
+      values.push(value);
+    }
+
+    itemMatch = liRegex.exec(listBody);
+  }
+
+  return values;
+}
+
+function extractWhoisCoImFallbackData(html, domain) {
+  const domainName = normalizeValue(
+    extractWhoisCoImValue(html, 'Domain')
+    || extractWhoisCoImValue(html, 'Domain Name')
+    || domain
+  );
+  const registrar = normalizeValue(extractWhoisCoImValue(html, 'Registrar'));
+  const created = normalizeValue(extractWhoisCoImValue(html, 'Created'));
+  const updated = normalizeValue(extractWhoisCoImValue(html, 'Updated'));
+  const expires = normalizeValue(extractWhoisCoImValue(html, 'Expires'));
+  const organization = normalizeValue(extractWhoisCoImValue(html, 'Company'));
+
+  const status = extractWhoisCoImList(html, 'Domain Status');
+  const nameservers = extractWhoisCoImList(html, 'Name Servers')
+    .map((item) => normalizeNameserver(item))
+    .filter(Boolean);
+
+  return {
+    domainName,
+    registrar,
+    registrarIanaId: null,
+    organization,
+    registrarEmail: null,
+    registrarPhone: null,
+    registrarUrl: null,
+    created,
+    expires,
+    updated,
+    status,
+    nameservers
+  };
 }
 
 function buildPayload(domain, rdapData, response) {
@@ -916,6 +1014,51 @@ async function tryRuWhoisFallback(domain) {
   );
 }
 
+async function tryWhoisCoImFallback(domain) {
+  const fallbackUrl = `${WHOIS_CO_IM_BASE_URL}${encodeURIComponent(domain)}`;
+
+  let response;
+  try {
+    response = await fetch(fallbackUrl, {
+      headers: {
+        Accept: 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8',
+        'User-Agent': `${SERVICE_NAME}/1.0 (+https://airat.top)`
+      }
+    });
+  } catch {
+    return null;
+  }
+
+  if (!response.ok) {
+    return null;
+  }
+
+  let html;
+  try {
+    html = await response.text();
+  } catch {
+    return null;
+  }
+
+  if (!html || !html.includes('hero-title')) {
+    return null;
+  }
+
+  const fallbackData = extractWhoisCoImFallbackData(html, domain);
+  if (!hasMeaningfulWhoisData(fallbackData)) {
+    return null;
+  }
+
+  return buildWhoisFallbackPayload(
+    domain,
+    fallbackData,
+    response.url || fallbackUrl,
+    response.status,
+    'whois-coim-fallback',
+    'whois.co.im'
+  );
+}
+
 async function performWhoisLookup(domain) {
   const rdapUrl = `${RDAP_BASE_URL}${encodeURIComponent(domain)}`;
 
@@ -957,6 +1100,14 @@ async function performWhoisLookup(domain) {
       };
     }
 
+    const coImFallbackPayload = await tryWhoisCoImFallback(domain);
+    if (coImFallbackPayload) {
+      return {
+        ok: true,
+        payload: coImFallbackPayload
+      };
+    }
+
     const ruFallbackPayload = await tryRuWhoisFallback(domain);
     if (ruFallbackPayload) {
       return {
@@ -978,6 +1129,14 @@ async function performWhoisLookup(domain) {
       return {
         ok: true,
         payload: tcpWhoisFallbackPayload
+      };
+    }
+
+    const coImFallbackPayload = await tryWhoisCoImFallback(domain);
+    if (coImFallbackPayload) {
+      return {
+        ok: true,
+        payload: coImFallbackPayload
       };
     }
 
