@@ -2,7 +2,7 @@
 
 ![whois](https://repository-images.githubusercontent.com/1191141883/0fc0dfe0-a453-4978-a5cf-8aa74d542937)
 
-Public Cloudflare Worker API for WHOIS/RDAP domain lookup.
+Public Cloudflare Worker API for domain lookup with RDAP + WHOIS fallback.
 
 - Live endpoint: https://whois.api.airat.top
 - Status page: https://status.airat.top
@@ -14,6 +14,10 @@ Required query parameter:
 
 Alias:
 - `name` - works as alias for `domain`.
+
+Lookup strategy:
+1. RDAP via `https://rdap.org/domain/<domain>`
+2. If RDAP is unavailable for a TLD, fallback via `https://whois.co.im/<domain>`
 
 ### `GET /`
 
@@ -62,6 +66,48 @@ Example response:
   },
   "service": "whois.api.airat.top",
   "generatedAt": "2026-03-25T00:00:00.000Z"
+}
+```
+
+Fallback response example (for domains where RDAP is unavailable):
+
+```json
+{
+  "ok": true,
+  "query": {
+    "domain": "bushido-coffee.ru"
+  },
+  "lookup": {
+    "rdapUrl": "https://whois.co.im/bushido-coffee.ru",
+    "httpStatus": 200,
+    "source": "whois-coim-fallback",
+    "whoisServer": "whois.co.im"
+  },
+  "rdap": {
+    "handle": null,
+    "ldhName": "BUSHIDO-COFFEE.RU",
+    "unicodeName": null,
+    "status": ["DELEGATED", "REGISTERED", "VERIFIED"],
+    "registrar": {
+      "name": "R01-RU",
+      "ianaId": null,
+      "handle": null,
+      "email": null,
+      "url": null,
+      "phone": null
+    },
+    "events": {
+      "registration": "September 20, 2007 at 8:00 PM UTC",
+      "expiration": "September 20, 2026 at 9:00 PM UTC",
+      "lastChanged": null,
+      "lastUpdate": null,
+      "transfer": null
+    },
+    "nameservers": ["ns1.expired.r01.ru", "ns2.expired.r01.ru"],
+    "dnssecSigned": null
+  },
+  "service": "whois.api.airat.top",
+  "generatedAt": "2026-03-26T00:00:00.000Z"
 }
 ```
 
